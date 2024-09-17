@@ -1,0 +1,27 @@
+** create environment using `conda env create -f requirements.yml`
+
+WITH SAMPLE DATASET rice_cameo and osmancik from ucirepo
+- knn with k=4, metric minkowski
+   insample = 93.2%
+   outsample = 92.3%
+
+- with svm linear, insample 92.8%, outsample 93.8%
+   
+
+- plot fit and predict wall clock times
+
+
+* for ANN, try different epoch values. -> the number of times the model passes through all my data
+
+KNN is:
+-sensitive to noisy data, 
+-poor performance with high dimension (too many features)
+-good for small to medium size problems
+
+SVM:
+- good for high dimension
+- good with noise
+- good for small to medium instances but with many features
+
+ANN:
+- needs very large data. Can overfit with small dataset

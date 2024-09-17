@@ -1,0 +1,32 @@
+name: cs7641
+channels:
+  - huggingface
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - matplotlib
+  - scipy
+  - pandas
+  - scikit-learn
+  - jupyter
+  - seaborn
+  - plotly
+  - datasets
+  - python-graphviz
+  - pip
+  - pip:
+    - icecream
+    - mlrose-hiive
+    - mlrose-ky
+    - pymdptoolbox
+    - mdptoolbox-hiive
+    - black
+    - black[jupyter]
+    - optuna
+    - yellowbrick
+    - joblib==1.2
+    - kneed
+    - gymnasium
