@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
+import pandas as pd
 
 def encode_onehot(labels):
     from sklearn.preprocessing import OneHotEncoder
@@ -41,6 +42,29 @@ def get_data(name):
         features = dataset.data.features.to_numpy()
         targets = dataset.data.targets.to_numpy()
         targets = targets.ravel()
+    elif name == "marketing":  # awesome for ANN
+        data = pd.read_csv('marketing_campaign.csv', sep="\t")
+        # drop missing values
+        data = data.dropna()
+
+        features = data.iloc[:, :-1].to_numpy()
+        targets = data.iloc[:, -1].to_numpy()
+        targets = targets.ravel()
+
+        # Encoding
+        from sklearn.preprocessing import OneHotEncoder
+        onehotencoder = OneHotEncoder(sparse_output=False)
+
+        encoded = onehotencoder.fit_transform(features[:, 2].reshape(-1, 1))
+
+        ft1 = np.concatenate((features[:, :2], encoded, features[:, 3:]), axis=1)
+        # now we encode the marital status
+        encoded = onehotencoder.fit_transform(ft1[:, 7].reshape(-1, 1))
+        ft2 = np.concatenate((ft1[:, :7], encoded, ft1[:, 8:]), axis=1)
+
+        # removing the date column
+        ft2 = np.concatenate((ft2[:, :18], ft2[:, 19:]), axis=1)
+        features = ft2
 
 
     return features, targets
@@ -58,7 +82,7 @@ def run(data_name, encode_type=None):
 
 
     X, y = get_data(data_name)
-    test_size = 0.30
+    test_size = 0.25
 
     if encode_type == "onehot":
         y = encode_onehot(y)
@@ -83,10 +107,10 @@ def run(data_name, encode_type=None):
     # initialize the ann
     ann = tf.keras.models.Sequential()
     ann.add(tf.keras.layers.Dense(units=X.shape[1], activation='relu')) # input and first hidden layer
-    ann.add(tf.keras.layers.Dense(units=128, activation='relu'))  # 2nd hidden layer
-    ann.add(tf.keras.layers.Dense(units=128, activation='relu'))  # 3rd hidden layer
-    ann.add(tf.keras.layers.Dense(units=128, activation='relu'))  # 2nd hidden layer
-    ann.add(tf.keras.layers.Dense(units=128, activation='relu'))  # 3rd hidden layer
+    #ann.add(tf.keras.layers.Dense(units=32, activation='relu'))  # 2nd hidden layer
+    #ann.add(tf.keras.layers.Dense(units=32, activation='relu'))  # 3rd hidden layer
+    # ann.add(tf.keras.layers.Dense(units=64, activation='relu'))  # 2nd hidden layer
+    # ann.add(tf.keras.layers.Dense(units=64, activation='relu'))  # 3rd hidden layer
 
     if y.ndim == 1:
         ann.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
@@ -95,7 +119,7 @@ def run(data_name, encode_type=None):
         ann.add(tf.keras.layers.Dense(units=y.shape[1], activation='softmax'))
         ann.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    ann.fit(X_train, y_train, batch_size=32, epochs=90, shuffle=False)
+    ann.fit(X_train, y_train, batch_size=32, epochs=20, shuffle=False)
 
     # Predictions
     y_pred_train = ann.predict(X_train)
@@ -112,7 +136,8 @@ if __name__ == '__main__':
     #run("spambase")
     #run("rice", encode_type="label")
     #run("churn")
-    run("health_nutri", encode_type="label")
+    #run("health_nutri", encode_type="label")
+    run("marketing")
 
 
 # YEAST
