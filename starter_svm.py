@@ -30,6 +30,11 @@ def get_data(name):
         features = dataset.data.features.to_numpy()
         targets = dataset.data.targets.to_numpy()
         targets = targets.ravel()
+    elif name == "monk":  # bean 602,
+        dataset = fetch_ucirepo(id=70)
+        features = dataset.data.features.to_numpy()
+        targets = dataset.data.targets.to_numpy()
+        targets = targets.ravel()
     elif name == "health_nutri":
         dataset = fetch_ucirepo(id=887)
         features = dataset.data.features.to_numpy()
@@ -62,7 +67,7 @@ def run_grid_search(xtrain, ytrain):
 ### program begins here
 def run(data_name):
     X, y = get_data(data_name)
-    test_size = 0.20
+    test_size = 0.40
 
     # splitting into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=0)
@@ -79,8 +84,8 @@ def run(data_name):
 
 
     # training on train set
-    classifier = SVC(kernel="rbf", degree=7, random_state=0)
-    #classifier = SVC(kernel="poly", degree=4, random_state=0)
+    classifier = SVC(kernel="rbf", random_state=0)
+    #classifier = SVC(kernel="poly", degree=3, random_state=0)
     #classifier = SVC(kernel="rbf", degree=3, random_state=0)
 
     classifier.fit(X_train, y_train)
@@ -101,8 +106,8 @@ if __name__ == "__main__":
     #run("yeast")
     #run("spambase")
     #run("rice")
-    #run("churn")
-    run("health_nutri")
+    run("monk")
+    #run("health_nutri")
 
 
 
@@ -128,3 +133,10 @@ if __name__ == "__main__":
 # health_nutri:
   #.84, .84 for linear
   # .85, .85 for rbf
+
+# bean:
+
+# cc
+  #svm: 82,82,
+
+# monk: (90, 87) with rbf

@@ -36,6 +36,11 @@ def get_data(name):
         features = dataset.data.features.to_numpy()
         targets = dataset.data.targets.to_numpy()
         targets = targets.ravel()
+    elif name == "monk":  # bean 602, creditCard 350, 70 for monk
+        dataset = fetch_ucirepo(id=70)
+        features = dataset.data.features.to_numpy()
+        targets = dataset.data.targets.to_numpy()
+        targets = targets.ravel()
     elif name == "thyroid":  #useless
         data = pd.read_csv('ann-train.data', header=None)
 
@@ -73,7 +78,7 @@ def run_grid_search(xtrain, ytrain):
 
 def run(data_name):
     X, y = get_data(data_name)
-    test_size = 0.20
+    test_size = 0.40
 
     # splitting into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=0)
@@ -89,7 +94,7 @@ def run(data_name):
     # print(f"Grid search done. Best params: {best_params} \nBest score: {best_scores}")
 
 
-    classifier = KNeighborsClassifier(n_neighbors=5, metric='minkowski', p=2)
+    classifier = KNeighborsClassifier(n_neighbors=5, metric='minkowski', p=1)
     #classifier = KNeighborsClassifier(n_neighbors=5, weights="distance")
     # classifier = KNeighborsClassifier(n_neighbors=30, p=2, algorithm="auto", leaf_size=10, weights="distance") #{'algorithm': 'auto', 'leaf_size': 10, 'n_neighbors': 30, 'p': 1, 'weights': 'distance'}
     classifier.fit(X_train, y_train)
@@ -109,8 +114,8 @@ if __name__ == "__main__":
     #run("spambase")
     #run("rice")
     #run("pmaintenance")
-    #run("churn")
-    run("health_nutri")
+    run("monk")
+    #run("health_nutri")
 
 
 ##
@@ -130,3 +135,5 @@ if __name__ == "__main__":
 # health_nutri:
   # .89, .82 for k3
   # .89, .83 for k5
+
+  # monk (.94, .83) with k=5 and p=1

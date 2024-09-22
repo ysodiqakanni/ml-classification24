@@ -42,6 +42,11 @@ def get_data(name):
         features = dataset.data.features.to_numpy()
         targets = dataset.data.targets.to_numpy()
         targets = targets.ravel()
+    elif name == "monk":  # bean 602, creditCard 350, iono52,
+        dataset = fetch_ucirepo(id=70)
+        features = dataset.data.features.to_numpy()
+        targets = dataset.data.targets.to_numpy()
+        targets = targets.ravel()
     elif name == "marketing":  # awesome for ANN
         data = pd.read_csv('marketing_campaign.csv', sep="\t")
         # drop missing values
@@ -82,7 +87,7 @@ def run(data_name, encode_type=None):
 
 
     X, y = get_data(data_name)
-    test_size = 0.25
+    test_size = 0.40
 
     if encode_type == "onehot":
         y = encode_onehot(y)
@@ -104,11 +109,14 @@ def run(data_name, encode_type=None):
     # run grid_search for hyperparameter tuning.
 
     # create the ANN model
+
+
+
     # initialize the ann
     ann = tf.keras.models.Sequential()
     ann.add(tf.keras.layers.Dense(units=X.shape[1], activation='relu')) # input and first hidden layer
-    #ann.add(tf.keras.layers.Dense(units=32, activation='relu'))  # 2nd hidden layer
-    #ann.add(tf.keras.layers.Dense(units=32, activation='relu'))  # 3rd hidden layer
+    #ann.add(tf.keras.layers.Dense(units=39, activation='relu'))  # 2nd hidden layer
+    #ann.add(tf.keras.layers.Dense(units=64, activation='relu'))  # 3rd hidden layer
     # ann.add(tf.keras.layers.Dense(units=64, activation='relu'))  # 2nd hidden layer
     # ann.add(tf.keras.layers.Dense(units=64, activation='relu'))  # 3rd hidden layer
 
@@ -119,7 +127,7 @@ def run(data_name, encode_type=None):
         ann.add(tf.keras.layers.Dense(units=y.shape[1], activation='softmax'))
         ann.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    ann.fit(X_train, y_train, batch_size=32, epochs=20, shuffle=False)
+    ann.fit(X_train, y_train, batch_size=16, epochs=47, shuffle=False)
 
     # Predictions
     y_pred_train = ann.predict(X_train)
@@ -137,7 +145,8 @@ if __name__ == '__main__':
     #run("rice", encode_type="label")
     #run("churn")
     #run("health_nutri", encode_type="label")
-    run("marketing")
+    #run("marketing")
+    run("monk")
 
 
 # YEAST
@@ -164,3 +173,14 @@ if __name__ == '__main__':
   # .90, .85 for 80Ep, d128x3 + d32
   # .95, .81 for 100Ep, d128x4
   # .92, .84 for 90Ep, d128x4
+
+# MONK:
+  # ann (81, 69),
+
+# Best trial:
+#   Value: 0.7816091775894165
+#   Params:
+#     units: 14
+#     optimizer: rmsprop
+#     epochs: 43
+#     batch_size: 18
